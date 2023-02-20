@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Switch, StyleSheet } from 'react-native';
-import { RadioButton } from 'react-native-paper';
+//import { styles } from './styles/styles.js';
 
 const App = () => {
   const [weight, setWeight] = useState('');
@@ -11,8 +11,14 @@ const App = () => {
   const [gender, setGender] = useState('male');
 
   const calculateBAC = () => {
-    let r = gender === 'male' ? 0.68 : 0.55;
-    let bac = ((bottlesConsumed * 0.33 * 5.14) / (weight * r)) - (0.015 * timeSinceConsuming);
+
+    let r = gender === 'male' ? 0.7 : 0.6;
+    let litres = bottlesConsumed * 0.33;
+    let alc_grams = litres * 8 * 4.5
+    let burning = weight / 10;
+    let remaining = alc_grams - (burning * timeSinceConsuming);
+    let bac = remaining / (weight * r);
+    if (bac < 0) bac = 0;
     setBac(bac.toFixed(2));
   }
 
@@ -43,6 +49,18 @@ const App = () => {
     color: isDarkMode ? '#fff' : '#000',
   };
 
+  const isSafe = {
+    color: '#0f0',
+  };
+
+  const dangerous = {
+    color: '#f00',
+  };
+
+  const nonZero = {
+    color: '#ff0',
+  };
+
   const topContainer = {
     width: '100%',
     flexDirection: 'row',
@@ -68,10 +86,13 @@ const App = () => {
           value={isDarkMode}
           style={topContainerItem}
         />
+        
+      </View>
+      <View>
         <Text style={[titleStyle, textStyle]}>Alcometer</Text>
       </View>
 
-      <Text style={[styles.label, textStyle]}>Enter your weight (in pounds):</Text>
+      <Text style={[styles.label, textStyle]}>Weight (kg)</Text>
       <TextInput
         style={[styles.input, textStyle]}
         keyboardType="numeric"
@@ -79,7 +100,7 @@ const App = () => {
         value={weight}
       />
 
-      <Text style={[styles.label, textStyle]}>Enter the number of bottles consumed (each bottle is 0.33 liters):</Text>
+      <Text style={[styles.label, textStyle]}>Bottles consumed (each bottle 0.33l)</Text>
       <TextInput
         style={[styles.input, textStyle]}
         keyboardType="numeric"
@@ -87,7 +108,7 @@ const App = () => {
         value={bottlesConsumed}
       />
 
-      <Text style={[styles.label, textStyle]}>Enter the time since consuming alcohol (in hours):</Text>
+      <Text style={[styles.label, textStyle]}>Time since consumption (h)</Text>
       <TextInput
         style={[styles.input, textStyle]}
         keyboardType="numeric"
@@ -100,65 +121,67 @@ const App = () => {
         <Button title={gender} onPress={toggleGender} />
       </View>
 
-      <View style={styles.genderContainer}>
-        <Text style={[styles.label, textStyle]}>Select your gender:</Text>
-        <View style={{flexDirection: 'row'}}>
-         <View style={{alignItems: 'center', flexDirection: 'row'}}>
-           <RadioButton
-             value="male"
-             status={gender === 'male' ? 'checked' : 'unchecked'}
-             onPress={() => setGender('male')}
-           />
-           <Text style={textStyle}>Male</Text>
-         </View>
-         <View style={{alignItems: 'center', flexDirection: 'row'}}>
-           <RadioButton
-             value="female"
-             status={gender === 'female' ? 'checked' : 'unchecked'}
-             onPress={() => setGender('female')}
-           />
-           <Text style={textStyle}>Female</Text>
-         </View>
-       </View>
-      </View>
+  {weight === '' &&
+    <Text style={[styles.result, dangerous]}>
+      Please input your weight!
+    </Text>
+  }
+  {weight <= 0 &&
+    <Text style={[styles.result, dangerous]}>
+      Weight value must be above 0!
+    </Text>
+  }
+  {bac > 0.05 &&
+    <Text style={[styles.result, dangerous]}>
+      {bac}
+    </Text>
+  }
+  {bac < 0.01 &&
+    <Text style={[styles.result, isSafe]}>
+      0.00
+    </Text>
+  }
+  {bac < 0.05 && weight != '' && bac > 0.00 &&
+    <Text style={[styles.result, nonZero]}>
+      {bac}
+    </Text>
+  }
 
   <Button title="Calculate" onPress={calculateBAC} />
 
-  {bac > 0 &&
-    <Text style={[styles.result, textStyle]}>
-      Your BAC is {bac}. {bac >= 0.08 ? "It's not safe for you to drive." : ""}
-    </Text>
-  }
+
+
 </View>
 );
 };
 
 const styles = StyleSheet.create({
-input: {
-borderWidth: 1,
-borderColor: 'gray',
-borderRadius: 5,
-width: '90%',
-padding: 10,
-marginBottom: 10,
-},
-label: {
-fontSize: 18,
-fontWeight: 'bold',
-width: '90%',
-marginBottom: 5,
-},
-result: {
-fontSize: 20,
-marginTop: 10,
-},
-genderContainer: {
-flexDirection: 'row',
-alignItems: 'center',
-justifyContent: 'space-between',
-width: '90%',
-marginBottom: 10,
-},
-});
+  input: {
+  borderWidth: 1,
+  borderColor: 'gray',
+  borderRadius: 5,
+  width: '90%',
+  padding: 10,
+  marginBottom: 10,
+  },
+  label: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  width: '90%',
+  marginBottom: 5,
+  },
+  result: {
+  fontSize: 20,
+  marginTop: 10,
+  },
+  genderContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '90%',
+  marginBottom: 10,
+  },
+  });
+
 
 export default App;
