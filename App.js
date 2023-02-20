@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Switch, StyleSheet } from 'react-native';
-//import { styles } from './styles/styles.js';
+import { View, Text, TextInput, Button, Switch, StyleSheet, TouchableOpacity } from 'react-native';
+import { styles } from './styles/styles.js';
 
 const App = () => {
   const [weight, setWeight] = useState('');
@@ -49,17 +49,6 @@ const App = () => {
     color: isDarkMode ? '#fff' : '#000',
   };
 
-  const isSafe = {
-    color: '#0f0',
-  };
-
-  const dangerous = {
-    color: '#f00',
-  };
-
-  const nonZero = {
-    color: '#ff0',
-  };
 
   const topContainer = {
     width: '100%',
@@ -122,66 +111,33 @@ const App = () => {
       </View>
 
   {weight === '' &&
-    <Text style={[styles.result, dangerous]}>
+    <Text style={[styles.result, styles.dangerous]}>
       Please input your weight!
     </Text>
   }
   {weight <= 0 &&
-    <Text style={[styles.result, dangerous]}>
+    <Text style={[styles.result, styles.dangerous]}>
       Weight value must be above 0!
     </Text>
   }
   {bac > 0.05 &&
-    <Text style={[styles.result, dangerous]}>
+    <Text style={[styles.result, styles.dangerous]}>
       {bac}
     </Text>
   }
   {bac < 0.01 &&
-    <Text style={[styles.result, isSafe]}>
+    <Text style={[styles.result, styles.safe]}>
       0.00
     </Text>
   }
   {bac < 0.05 && weight != '' && bac > 0.00 &&
-    <Text style={[styles.result, nonZero]}>
+    <Text style={[styles.result, styles.nonZero]}>
       {bac}
     </Text>
   }
 
   <Button title="Calculate" onPress={calculateBAC} />
 
-
-
-</View>
-);
-};
-
-const styles = StyleSheet.create({
-  input: {
-  borderWidth: 1,
-  borderColor: 'gray',
-  borderRadius: 5,
-  width: '90%',
-  padding: 10,
-  marginBottom: 10,
-  },
-  label: {
-  fontSize: 18,
-  fontWeight: 'bold',
-  width: '90%',
-  marginBottom: 5,
-  },
-  result: {
-  fontSize: 20,
-  marginTop: 10,
-  },
-  genderContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '90%',
-  marginBottom: 10,
-  },
-  });
-
+</View>);};
 
 export default App;
