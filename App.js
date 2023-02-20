@@ -163,7 +163,7 @@ const App = () => {
           </Text>
         }
         {weight <= 0 &&
-          <Text style={[styles.result, styles.dangerous]}>
+          <Text style={[styles.result, styles.dangerous]}> 
             Weight value must be above 0!
           </Text>
         }
