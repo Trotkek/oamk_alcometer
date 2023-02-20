@@ -15,4 +15,6 @@ Simple application to roughly calculate blood alcohol level
 
 
 
-![image](https://user-images.githubusercontent.com/92210170/220154473-04082b0c-d75f-47ea-82b4-d3500757f6dc.png)
+![image](https://user-images.githubusercontent.com/92210170/220154985-f399659c-64fa-487f-90cb-340450e21abe.png)
+
+
