@@ -61,16 +61,12 @@ const App = () => {
   };
 
   const containerStyle = {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
     backgroundColor: isDarkMode ? '#333' : '#fff',
   };
 
   const textStyle = {
     color: isDarkMode ? '#fff' : '#000',
   };
-
 
   const topContainer = {
     width: '100%',
@@ -87,8 +83,8 @@ const App = () => {
       <ScrollView>
         <View style={topContainer}>
           <Switch
-            trackColor={{ false: "#777777", true: "#80bfff" }}
-            thumbColor={isDarkMode ? "#ffdd4b" : "#f4f4f4"}
+            trackColor={{ false: "#777", true: "#8bf" }}
+            thumbColor={isDarkMode ? "#fd4" : "#fff"}
             onValueChange={toggleDarkMode}
             value={isDarkMode}
           />
