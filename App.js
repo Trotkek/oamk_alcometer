@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Switch, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, Switch, StyleSheet, TouchableOpacity, Pressable, ScrollView } from 'react-native';
 import { styles } from './styles/styles.js';
+import RadioButton from './styles/RadioButton.js';
 
 const App = () => {
   const [weight, setWeight] = useState('');
-  const [bottlesConsumed, setBottlesConsumed] = useState('');
-  const [timeSinceConsuming, setTimeSinceConsuming] = useState('');
+  const [bottlesConsumed, setBottles] = useState('0');
+  const [time, setTime] = useState('0');
   const [bac, setBac] = useState('');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [gender, setGender] = useState('male');
 
   const calculateBAC = () => {
@@ -16,7 +17,7 @@ const App = () => {
     let litres = bottlesConsumed * 0.33;
     let alc_grams = litres * 8 * 4.5
     let burning = weight / 10;
-    let remaining = alc_grams - (burning * timeSinceConsuming);
+    let remaining = alc_grams - (burning * time);
     let bac = remaining / (weight * r);
     if (bac < 0) bac = 0;
     setBac(bac.toFixed(2));
@@ -31,18 +32,39 @@ const App = () => {
     setGender(newGender);
   }
 
-  const containerStyle = {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: isDarkMode ? '#222' : '#fff',
+  const incrTime = () => {
+    const newTime = parseInt(time) + 1;
+    setTime(newTime.toString());
   };
 
-  const titleStyle = {
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: isDarkMode ? '#fff' : '#000',
+  const decrTime = () => {
+    const newTime = parseInt(time) - 1;
+    if (newTime < 0) {
+      setTime('0');
+    } else {
+      setTime(newTime.toString());
+    }
+  };
+
+  const incrBottle = () => {
+    const newBottle = parseInt(bottlesConsumed) + 1;
+    setBottles(newBottle.toString());
+  };
+
+  const decrBottle = () => {
+    const newBottle = parseInt(bottlesConsumed) - 1;
+    if (newBottle < 0) {
+      setBottles('0');
+    } else {
+      setBottles(newBottle.toString());
+    }
+  };
+
+  const containerStyle = {
+    //flex: 1,
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    backgroundColor: isDarkMode ? '#333' : '#fff',
   };
 
   const textStyle = {
@@ -54,90 +76,103 @@ const App = () => {
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 40,
+    paddingLeft: 5,
+    paddingTop: 20,
     paddingBottom: 10,
-    backgroundColor: isDarkMode ? '#1E1E1E' : '#E8E8E8',
+    backgroundColor: isDarkMode ? '#111' : '#eee',
   };
-
-  const topContainerItem = {
-    marginRight: 20,
-  }
 
   return (
     <View style={containerStyle}>
-      <View style={topContainer}>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={isDarkMode ? "#f5dd4b" : "#f4f3f4"}
-          onValueChange={toggleDarkMode}
-          value={isDarkMode}
-          style={topContainerItem}
+      <ScrollView>
+        <View style={topContainer}>
+          <Switch
+            trackColor={{ false: "#777777", true: "#80bfff" }}
+            thumbColor={isDarkMode ? "#ffdd4b" : "#f4f4f4"}
+            onValueChange={toggleDarkMode}
+            value={isDarkMode}
+          />
+        </View>
+        <View>
+          <Text style={[styles.titleStyle, textStyle]}>Alcometer</Text>
+        </View>
+
+        <Text style={[styles.label, textStyle]}>Weight (kg)</Text>
+        <TextInput
+          style={[styles.input, textStyle]}
+          keyboardType="numeric"
+          onChangeText={text => setWeight(text)}
+          value={weight}
         />
-        
-      </View>
-      <View>
-        <Text style={[titleStyle, textStyle]}>Alcometer</Text>
-      </View>
 
-      <Text style={[styles.label, textStyle]}>Weight (kg)</Text>
-      <TextInput
-        style={[styles.input, textStyle]}
-        keyboardType="numeric"
-        onChangeText={text => setWeight(text)}
-        value={weight}
-      />
+        <Text style={[styles.label, textStyle]}>Bottles (0.33l each)</Text>
+        <View style={styles.inputContainer}>
+          <TouchableOpacity style={styles.button} onPress={decrBottle}>
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={[styles.input, textStyle]}
+            keyboardType="numeric"
+            onChangeText={text => setBottles(text)}
+            value={bottlesConsumed}
+          />
+          <TouchableOpacity style={styles.button} onPress={incrBottle}>
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
 
-      <Text style={[styles.label, textStyle]}>Bottles consumed (each bottle 0.33l)</Text>
-      <TextInput
-        style={[styles.input, textStyle]}
-        keyboardType="numeric"
-        onChangeText={text => setBottlesConsumed(text)}
-        value={bottlesConsumed}
-      />
+        <Text style={[styles.label, textStyle]}>Time (h)</Text>
+        <View style={styles.inputContainer}>
+          <TouchableOpacity style={styles.button} onPress={decrTime}>
+            <Text style={styles.buttonText}>-</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={[styles.input, textStyle]}
+            keyboardType="numeric"
+            onChangeText={text => setTime(text)}
+            value={time}
+          />
+          <TouchableOpacity style={styles.button} onPress={incrTime}>
+            <Text style={styles.buttonText}>+</Text>
+          </TouchableOpacity>
+        </View>
 
-      <Text style={[styles.label, textStyle]}>Time since consumption (h)</Text>
-      <TextInput
-        style={[styles.input, textStyle]}
-        keyboardType="numeric"
-        onChangeText={text => setTimeSinceConsuming(text)}
-        value={timeSinceConsuming}
-      />
+        <View style={styles.gendCont}>
+          <Text style={[styles.label, textStyle]}>Select your gender:</Text>
+          <Button title={gender} onPress={toggleGender} />
+        </View>
+        {bac > 0.05 &&
+          <Text style={[styles.result, styles.dangerous]}>
+            {bac}
+          </Text>
+        }
+        {bac < 0.01 &&
+          <Text style={[styles.result, styles.safe]}>
+            0.00
+          </Text>
+        }
+        {bac < 0.05 && weight != '' && bac > 0.00 &&
+          <Text style={[styles.result, styles.nonZero]}>
+            {bac}
+          </Text>
+        }
+        <View style={styles.calcCont}>
+          <Button title="Calculate" onPress={calculateBAC} />
+        </View>
 
-      <View style={styles.genderContainer}>
-        <Text style={[styles.label, textStyle]}>Select your gender:</Text>
-        <Button title={gender} onPress={toggleGender} />
-      </View>
 
-  {weight === '' &&
-    <Text style={[styles.result, styles.dangerous]}>
-      Please input your weight!
-    </Text>
-  }
-  {weight <= 0 &&
-    <Text style={[styles.result, styles.dangerous]}>
-      Weight value must be above 0!
-    </Text>
-  }
-  {bac > 0.05 &&
-    <Text style={[styles.result, styles.dangerous]}>
-      {bac}
-    </Text>
-  }
-  {bac < 0.01 &&
-    <Text style={[styles.result, styles.safe]}>
-      0.00
-    </Text>
-  }
-  {bac < 0.05 && weight != '' && bac > 0.00 &&
-    <Text style={[styles.result, styles.nonZero]}>
-      {bac}
-    </Text>
-  }
+        {weight === '' &&
+          <Text style={[styles.result, styles.dangerous]}>
+            Please input your weight!
+          </Text>
+        }
+        {weight <= 0 &&
+          <Text style={[styles.result, styles.dangerous]}>
+            Weight value must be above 0!
+          </Text>
+        }
 
-  <Button title="Calculate" onPress={calculateBAC} />
-
-</View>);};
+      </ScrollView></View>);
+};
 
 export default App;
